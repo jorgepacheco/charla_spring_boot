@@ -1,0 +1,934 @@
+======================
+	PRESENTACION
+======================
+
+
+1) QUE ES ???
+----------------
+
+	. Un modulo de Spring que simplifica la creación de aplicaciones y servicios Spring listas para ejecutarse.
+
+2) CARACTERISTICAS
+------------------
+	
+	· Proveer una forma muy sencilla de arrancar desarrollos Spring
+
+	· Ofrecer funcionalidad out-of-the-box en función de la naturaleza del proyecto (proyecto-web, jpa, jms, noSql)
+
+	. Configurar automáticamente Spring siempre que sea posible
+
+	. Proporciona 'starter' POM para simplificar la configuración de maven.
+
+	· Ofrece una serie de características no funcionales comunes a los proyectos (por ejemplo, servidores embebidos, seguridad, metricas, configuración externalizada)
+
+	· No necesitar generación código ni configuración XML.
+
+	. Proporciona una linea de comandos Spring Boot CLI
+
+		. Que se puede usar para crear rapidamente prototipos.
+		. Permite ejecutar scripts de Groovy
+		. No es necesario para trabajar con spring boot.
+
+3) PRIMER EJEMPLO
+-----------------
+
+	. spring-boot-starter-parent
+	. spring-boot-starter-web
+
+	. Clase java Example
+		- Anotaciones Spring MVC
+		- @EnableAutoConfiguration: Le dice a Spring como tiene que configurar la aplicación en función de las dependencias encontradas. En este caso asume que es un aplicación web y proporciona la configuración Spring MVC y un tomcat embebido.
+
+
+	. Arrancar la aplicacion con mvn spring-boot:run
+
+	. Generar un jar autoejecutable listo
+
+		- Añadir: spring-boot-maven-plugin
+
+
+4) COMO USAR SPRING BOOT
+----------------------
+	
+	. Spring Boot se puede usar tanto con Maven como con Gradle (Nos centraremos en maven)
+
+	. Se puede heredar de spring-boot-starter-parent que nos proporciona las siguientes caracteristicas
+
+			https://github.com/spring-projects/spring-boot/blob/master/spring-boot-starters/spring-boot-starter-parent/pom.xml
+
+			. Java 1.6 as the default compiler level.
+			. UTF-8 source encoding.
+			. A Dependency Management section, allowing you to omit <version> tags for common dependencies, inherited from the spring-boot-dependencies POM.
+				 https://github.com/spring-projects/spring-boot/blob/master/spring-boot-dependencies/pom.xml
+			. Sensible resource filtering.
+			. Sensible plugin configuration (exec plugin, surefire, Git commit ID, shade).
+
+	. Estos valores se pueden cambiar 	
+
+			<properties>
+			    <java.version>1.8</java.version>
+			</properties>
+
+	. spring-boot-maven-plugin
+
+		- Para añadir el empaquetado en un jar autoejecutable
+
+
+5) STARTERS POM
+----------------
+
+- Agrupaciones de dependencias clasificadas por tipos que evita tener que configurarlas manualmente.
+
+- Estas agrupaciones pueden ser por:
+
+	. Funcionalidad
+
+		- spring-boot-starter: he core Spring Boot starter, including auto-configuration support, logging and YAML.
+		- spring-boot-starter-data-jpa: Soporte para JPA, incluyendo spring-data-jpa, spring-orm
+		- spring-boot-starter-security: Soporte para Spring Security
+		- spring-boot-starter-test: Soporte para test incluyendo: JUnit, Hamcrest and Mockito junto al modulo spring-test
+		- spring-boot-starter-web: Soporte al desarrollo de aplicaciones web incluyendo un tomcat-embbebido y  spring-webmvc
+		- spring-boot-starter-data-mongodb: Soporte MongoDB NoSQL Database, including spring-data-mongodb.
+		- spring-boot-starter-ws: Support for Spring Web Services
+
+	. Metricas (Caracteristicas de Producción):
+
+		- spring-boot-starter-actuator: Añade caracteristicas de monitorización y medición.
+		- spring-boot-starter-remote-shell
+
+	. Exclusión de caracteristicas
+
+		- spring-boot-starter-jetty: Imports the Jetty HTTP engine (to be used as an alternative to Tomcat)
+		- spring-boot-starter-log4j: Support the Log4J logging framework
+		- spring-boot-starter-logging: Import Spring Boot’s default logging framework (Logback).
+		- spring-boot-starter-tomcat:Import Spring Boot’s default HTTP engine (Tomcat).
+
+
+
+6) CONFIGURACION
+-----------------
+
+
+@Configuration
+@EnableAutoConfiguration
+@ComponentScan
+public class Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+}
+
+- Favorece la configuración basada en Java (aunque puede ser llamada desde un XML)
+
+- No es necesario tener toda la configuración en la misma clase
+
+	. Puede importarse otras clase de configuración @Configuration --> @Import
+	. Se pueden cargar archivos xml de configuracion --> @ImportResource
+
+- No es necesario tener toda la configuración en la misma clase
+
+	. Puede importarse otras clase de configuración @Configuration --> @Import
+	. Se pueden cargar archivos xml de configuracion --> @ImportResource
+
+
+- AUTOCONFIGURACION --> @EnableAutoConfiguration
+
+	. Spring Boot intenta automaticamente configurar la aplicación basandose en las dependendencias jar que se han añadido.
+		Por Ej si HSQLDB esta en tu claspath y no has configurado manualmente ninguna datasource, autoconfigurara una bd en memoria
+
+	. No invasivo, en cualquier momento podemos añadir configuración manual para sustituir partes específicas de la configuración automática. Por ejemplo, si añadimos manualmente  DataSource, el soporte de a BBDD embebidas no se tendra en cuenta.
+
+	. Si al ejecutar ponemos --debug se podra ver un informe de la auto-configuración
+
+	. Se pueden desactivar partes de la autoconfiguracion
+
+		@Configuration
+		@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
+		public class MyConfiguration {
+		}
+
+
+
+7) EJECUCION
+-------------
+
+	- Desde un IDE como un aplicación java normal
+
+	- Desde un jar (Si hemos usado el pluging de empaquetado de Spring-Boot)
+
+			$ java -jar target/myproject-0.0.1-SNAPSHOT.jar
+
+			$ java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n -jar target/myproject-0.0.1-SNAPSHOT.jar
+
+	- Maven 
+
+			$ mvn spring-boot:run
+
+
+
+8) CARACTERISTICAS:
+-------------------
+
+. SpringApplication clase encargada de arrancar una aplicación Spring.
+
+public static void main(String[] args) {
+    SpringApplication.run(MySpringConfiguration.class, args);
+}
+
+. Al arrancar se muestra en consola algo asi
+
+
+	 /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+	( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+	 \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+	  '  |____| .__|_| |_|_| |_\__, | / / / /
+	 =========|_|==============|___/=/_/_/_/
+	 :: Spring Boot ::   v1.2.0.M1
+
+	2013-07-31 00:08:16.117  INFO 56603 --- [           main] o.s.b.s.app.SampleApplication            : Starting SampleApplication v0.1.0 on mycomputer with PID 56603 (/apps/myapp.jar started by pwebb)
+	2013-07-31 00:08:16.166  INFO 56603 --- [           main] ationConfigEmbeddedWebApplicationContext : Refreshing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@6e5a8246: startup date [Wed Jul 31 00:08:16 PDT 2013]; root of context hierarchy
+	2014-03-04 13:09:54.912  INFO 41370 --- [           main] .t.TomcatEmbeddedServletContainerFactory : Server initialized with port: 8080
+	2014-03-04 13:09:56.501  INFO 41370 --- [           main] o.s.b.s.app.SampleApplication            : Started SampleApplication in 2.992 seconds (JVM running for 3.658)
+
+
+. Esta consola se puede personalizar añadiendo banner.txt en el classpath, o desactivar:
+
+	public static void main(String[] args) {
+	    SpringApplication app = new SpringApplication(MySpringConfiguration.class);
+	    app.setShowBanner(false);
+	    app.run(args);
+	}
+
+. Tiene la referencia de las @Configuration clases, pueden ser ficheros de configuración o packetes a escanear.
+
+. Se le pueden añadir ApplicationEvents and listeners
+
+. Crea el aplicationContext adecuado AnnotationConfigApplicationContext or AnnotationConfigEmbeddedWebApplicationContext en funcion de si es un entorno web o no. (Se puede desactivar el contexto WEB setWebEnvironment(boolean webEnvironment) --> Por ejemplo para Test
+
+. Se puede añadir un aplicationContext propio setApplicationContextClass
+
+. Si necessitamos ejecutar algún codigo cuando arranque SprinApplication, los beans pueden extender de CommandLineRunner
+
+	@Component
+	public class MyBean implements CommandLineRunner {
+
+	    public void run(String... args) {
+	        // Do something...
+	    }
+
+	}
+
+
+. Application exit
+
+	Implementar org.springframework.boot.ExitCodeGenerator interface
+
+
+==========================================================
+
+=======   EJEMPLO DE PERSONALIZACIÓN DE SPRING-BOOT  =====
+
+==========================================================
+
+
+9) EXTERNALIZAR LA CONFIGURACIÓN 
+--------------------------------
+
+. Spring Boot le permite externalizar su configuración para que pueda trabajar con el mismo código de la aplicación en diferentes entornos. 
+
+	- Puede utilizar archivos de propiedades
+	- archivos YAML
+	- variables de entorno 
+	- Argumentos de línea de comandos para exteriorizar configuración. 
+
+. El orden que sigue Spring Boot sigue para resolver 
+
+		- Command line arguments.
+		- Java System properties (System.getProperties()).
+		- OS environment variables.
+		- JNDI attributes from java:comp/env
+		- A RandomValuePropertySource that only has properties in random.*.
+		- Application properties outside of your packaged jar (application.properties including YAML and profile variants).
+		- Application properties packaged inside your jar (application.properties including YAML and profile variants).
+		- @PropertySource annotations on your @Configuration classes.
+		- Default properties (specified using SpringApplication.setDefaultProperties).
+
+. Los valores de propiedad pueden ser inyectados directamente @Value
+
+		@Component
+		public class MyBean {
+
+		    @Value("${name}")
+		    private String name;
+
+		    // ...
+
+		}
+
+	1. Añadir la propiedad 'name' en un fichero application.properties en el classpath
+		A /config subdir of the current directory.
+		The current directory
+		A classpath /config package
+		The classpath root
+
+	2. Se puede sobreescribir añadiendo el valor por liena de comando java -jar app.jar --name="Spring"
+
+ . Una caracteristica curiosa es la de RandomValuePropertySource para generar valores aleatorios --> Para Test
+
+		my.secret=${random.value}
+		my.number=${random.int}
+		my.bignumber=${random.long}
+		my.number.less.than.ten=${random.int(10)}
+		my.number.in.range=${random.int[1024,65536]}
+
+ . Podemos cambiar tanto rl nombre, como la ubicación del fichero application.properties añadiendo las propiedades
+spring.config.name, spring.config.location
+
+java -jar target/external-configuration-spring-boot-0.0.1-SNAPSHOT.jar --spring.config.location=file:/Users/jorgepacheco/configSpringBoot/application.properties
+
+. Un uso comun es usar el application.properties y en el definir spring.config.name y spring.config.location
+
+
+. Tambien soporta el formato YAML para definir las propiedades
+
+. Cuando esta activado @EnableConfigurationProperties Los bean anotados @ConfigurationProperties will be automatically configured from the Environment properties
+
+@Component
+@ConfigurationProperties(prefix="connection")
+public class ConnectionSettings {
+
+    private String username;
+
+    private InetAddress remoteAddress;
+
+    // ... getters and setters
+
+}
+
+Util con el formato YAML
+
+# application.yml
+
+connection:
+    username: admin
+    remoteAddress: 192.168.1.1
+
+# additional configuration as required
+
+
+O .properties   connection.username= admin
+				connection.remoteAddress=192.168.1.1
+
+
+- @ConfigurationProperties se le pueden añadir validaciones JSR-303
+
+@Component
+@ConfigurationProperties(prefix="connection")
+public class ConnectionSettings {
+
+    @NotNull
+    private InetAddress remoteAddress;
+
+    // ... getters and setters
+
+}
+
+
+10) PROFILES
+------------
+
+. Spring permite la activación de perfiles a traves de la anotación @Profile
+
+	@Configuration
+	@Profile("production")
+	public class ProductionConfiguration {
+
+	    // ...
+
+	}
+ 
+ . El profile activo lo podriamos indicar desde la propiedad spring.profiles.active desde:
+
+ 	- application.properties --> spring.profiles.active=dev,hsqldb
+ 	- linea de comando --spring.profiles.active=dev,hsqldb
+
+	- Se pueden activar programaticamente SpringApplication.setAdditionalProfiles(...) antes de que arranque la aplicacion.
+
+
+ . Tendremos ficheros de propiedades den función del profile activo application-{profile}.properties
+
+
+===========================================================
+
+=======   EJEMPLO DE MANEJO DE PROPERTIES Y PROFILES  =====
+
+===========================================================
+
+
+
+11) LOGGING
+------------
+
+. Spring Boot usa internamete Commons Logging y si usas los starter POMs Logback
+
+. Por defecto el Log va por pantalla y con nivel ERROR, WARN and INFO para cambiarlo puedes añadir el flag --debug
+
+. Para definir el nombre del fichero de log en el application.properties se añade el parametro logging.file o logging.path
+
+. Se puede definir el nivel de log añadiendo al application.properties
+
+		logging.level.org.springframework.web= DEBUG
+		logging.level.org.hibernate= ERROR
+
+. Se pueden personalizar el sistema de trazas añadiendo las dependencias necesarias y añadiendo el fichero de congiguracion apropiado al classpath (o donde le indiquemos con logging.config) --> Revisar ejemplo
+
+		Logback --> logback.xml
+
+		Log4j --> log4j.properties or log4j.xml
+
+		JDK (Java Util Logging) --> logging.properties
+
+
+
+12) DESARROLLO DE APLICACIONES WEB
+----------------------------------
+
+
+. Spring Boot - Permite arrancar de manera facil y rapida aplicaciones web
+. Ofrece la posibilidad de crear un servidor embebido como Tomcat y Jetty
+. Bastaria con añadir spring-boot-starter-web
+
+
+. Añade toda la configuración necesaria para trabajar con Spring MVC auto-configuration
+
+ - Inclusion of ContentNegotiatingViewResolver and BeanNameViewResolver beans.
+ - Support for serving static resources, including support for WebJars (see below).
+ - Automatic registration of Converter, GenericConverter, Formatter beans.
+ - Support for HttpMessageConverters (see below).
+ - Automatic registration of MessageCodeResolver (see below)
+ - Static index.html support.
+ - Custom Favicon support.
+
+. Si se quiere tener el control completo de Spring MVC se añade un bean @Configuration con @EnableWebMvc
+
+. Si se quiere mantener la configuración de Spring MVC Boot y añadir configuración adicional (nterceptors, formatters, view controllers etc. )se puede añadir su propio @Bean de tipo 
+WebMvcConfigurerAdapter, pero sin @EnableWebMvc 
+
+. Spring MVC uses the HttpMessageConverter interface to convert HTTP requests and responses. Sensible defaults are included out of the box, for example Objects can be automatically converted to JSON (using the Jackson library) or XML (using JAXB).
+
+Se podria añadir uno propio
+
+@Configuration
+public class MyConfiguration {
+
+    @Bean
+    public HttpMessageConverters customConverters() {
+        HttpMessageConverter<?> additional = ...
+        HttpMessageConverter<?> another = ...
+        return new HttpMessageConverters(additional, another);
+    }
+
+}
+
+
+Añade un custom Converter
+
+
+* Contenido estatico
+
+Por defecto /static (or /public or /resources or /META-INF/resources
+
+Any resources with a path in /webjars/**
+
+ESte comportamiento se puede personalizar usando WebMvcConfigurerAdapter and overriding the addResourceHandlers
+
+* Template Engine (Por defecto ThymeLeaf)
+
+	- FreeMarker
+	- Groovy
+	- Thymeleaf
+	- Velocity
+
+Los template los busca en /main/resources/templates.
+
+
+* Spring Boot ofrece soporte para los contenedores embebidos com o Tomcat o Jetty escuchando 8080
+
+(Eligiendo el starter adecuado)
+
+*  Servlets and Filters por defecto solo levanta un servlet mapeado '/' aunque se pueden definir varios Servlet o Filter como Spring Beans
+
+
+* Customizar el Servidor embebido
+
+Definiendo el el aplication.properties
+
+	. server.port — The listen port for incoming HTTP requests.
+	. server.address — The interface address to bind to.
+	. server.sessionTimeout — A session timeout.
+	. server.contextPath
+
+	(ServerProperties contiene la lista de parametros)
+
+* Configuracion programatica
+
+@Component
+public class CustomizationBean implements EmbeddedServletContainerCustomizer {
+
+    @Override
+    public void customize(ConfigurableEmbeddedServletContainer container) {
+        container.setPort(9000);
+    }
+
+}
+
+O configurar directamente la instancia relativa al Tomcat (TomcatEmbeddedServletContainerFactory) o Jetty (JettyEmbeddedServletContainerFactory)
+
+@Bean
+public EmbeddedServletContainerFactory servletContainer() {
+    TomcatEmbeddedServletContainerFactory factory = new TomcatEmbeddedServletContainerFactory();
+    factory.setPort(9000);
+    factory.setSessionTimeout(10, TimeUnit.MINUTES);
+    factory.addErrorPages(new ErrorPage(HttpStatus.404, "/notfound.html");
+    return factory;
+}
+
+
+
+==========================================================
+
+=============   EJEMPLO DE APLICACION WEB  ===============
+
+==========================================================
+
+13) SEGURIDAD
+--------------
+
+
+. Si spring security esta en el classpath la aplicacion web contendra autenticacion basica protegiendo todas las HTTP
+
+. AutenticationManager con un usuario 'user' password aleatoria que saldra en el log de la aplicacion
+
+	(Se puede configurar con el parametro security.user.password (Mirar SecurityProperties))
+
+Valores por defecto:
+
+	. An AuthenticationManager bean with in-memory store and a single user (see SecurityProperties.User for the properties of the user).
+	. Se ignoran los path de recursos estaticos (/css/**, /js/**, /images/** and **/favicon.ico).
+	. HTTP Basic security for all other endpoints.
+	. Security events published to Spring’s ApplicationEventPublisher (successful and unsuccessful authentication and access denied).
+	. Common low-level features (HSTS, XSS, CSRF, caching) provided by Spring Security are on by default.
+
+
+. Se puede usar una configuracion propia de seguridad añadiendo @EnableWebSecurity usando ficheros externos y bean de tipo WebConfigurerAdapter
+
+
+=======================================================================
+
+=============   EJEMPLO ANTERIOR LE AÑADIMOS SEGURIDAD  ===============
+
+=======================================================================
+
+14) TRABAJANDO CON BBDD RELACIONALES
+-------------------------------------
+
+- Spring Boot nos permite levantar un servidor de BD embbedido  H2, HSQL and Derby con solo con añadir su dependencia
+
+	<dependency>
+	    <groupId>org.springframework.boot</groupId>
+	    <artifactId>spring-boot-starter-data-jpa</artifactId>
+	</dependency>
+	<dependency>
+	    <groupId>org.hsqldb</groupId>
+	    <artifactId>hsqldb</artifactId>
+	    <scope>runtime</scope>
+	</dependency>
+
+- Esta BBDD se podrá crear y cargar si añadimos al classpath los ficheros
+
+		. schema.sql
+		. data.sql
+
+
+- Y automaticamente no creara un datasource
+
+- La creacion de este DataSource se puede configurar a traves del application.properties
+
+spring.datasource.url=jdbc:mysql://localhost/test
+spring.datasource.username=dbuser
+spring.datasource.password=dbpass
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+
+
+spring.datasource.driver-class No es necesario ya que Spring Boot lo deduce a partir de la URL de conexion
+
+* Connection to a JNDI DataSource
+
+spring.datasource.jndi-name=java:jboss/datasources/customers
+
+
+* Usando JdbcTemplate (spring-boot-starter-jdbc)
+
+Se configura automaticamente y solo necesitamos inyectarlas con @Autowired:
+
+	import org.springframework.beans.factory.annotation.Autowired;
+	import org.springframework.jdbc.core.JdbcTemplate;
+	import org.springframework.stereotype.Component;
+
+	@Component
+	public class MyBean {
+
+	    private final JdbcTemplate jdbcTemplate;
+
+	    @Autowired
+	    public MyBean(JdbcTemplate jdbcTemplate) {
+	        this.jdbcTemplate = jdbcTemplate;
+	    }
+
+	    // ...
+
+	}
+
+
+* JPA and “Spring Data” --> spring-boot-starter-data-jpa --> Mirar Ejemplo
+
+	. Hibernate — One of the most popular JPA implementations.
+	. Spring Data JPA — Makes it easy to easily implement JPA-based repositories.
+	. Spring ORMs — Core ORM support from the Spring Framework.
+
+* Entity Classes
+
+	. Normalmente Entity son especificadas en un persistence.xml
+
+	. Con Spring Boot no es necesario, se escanearan por defecto todos los paquetes debajo de la clase principal de configuracion (El anotado con @EnableAutoConfiguration)
+
+	. Para personalizarlo se puede usar @EntityScan 
+
+* Spring Data JPA Repositories
+
+	. Si tiene activo EnableAutoConfiguration se buscaran a partir de la del packete base
+
+	public interface CityRepository extends Repository<City, Long> {
+
+	    Page<City> findAll(Pageable pageable);
+
+	    City findByNameAndCountryAllIgnoringCase(String name, String country);
+
+	}	
+
+
+====================================================
+
+=============   EJEMPLO JDBC Y JPA  ================
+
+====================================================
+
+
+15) NOSQL
+----------
+
+. Spring Boot proporciona autoconfiguración para Redis, MongoDB, Elasticsearch, Solr, Gemfire
+
+. Mongo DB
+
+	- Solo necesitamos añadir la dependencia spring-boot-starter-data-mongodb “Starter POM”.
+
+	- Automaticamente se creará una instancia com.mongodb.Mongo que intentara conectarse mongodb://localhost/test
+
+		. Esto se podrá personalizar con las propiedades:
+			spring.data.mongodb.host=mongoserver
+			spring.data.mongodb.port=27017
+
+	- Tambien se creara automaticamente una instancia MongoTemplate que podremos inyectar en cualquier bean. 
+
+
+		import org.springframework.beans.factory.annotation.Autowired;
+		import org.springframework.data.mongodb.core.©;
+		import org.springframework.stereotype.Component;
+
+		@Component
+		public class MyBean {
+
+		    private final MongoTemplate mongoTemplate;
+
+		    @Autowired
+		    public MyBean(MongoTemplate mongoTemplate) {
+		        this.mongoTemplate = mongoTemplate;
+		    }
+
+		    // ...
+
+		}
+
+
+. Ofrece el mismo soporte para Repositorios que con JPA Spring Data MongoDB repositories
+
+
+	public interface CustomerRepository extends MongoRepository<Customer, String> {
+
+		public Customer findByFirstName(String firstName);
+
+		public List<Customer> findByLastName(String lastName);
+
+	}
+
+
+====================================================
+
+=============   EJEMPLO MONGODB  ==================
+
+====================================================
+
+
+16) SOPORTE PARA JMS
+---------------------
+
+
+- Spring Boot configura la infraestructura necesaria para el soporte de JMS
+
+- HornetQ support
+
+- ActiveMQ support
+
+	. Configura una ConnectionFactory cuando detecta ACTIVEMQ IN THE CLASSPATH
+	. Levanta un servidor embbebido
+	. Se puede conectar con un servidor externo
+
+	spring.activemq.broker-url=tcp://192.168.1.210:9876
+	spring.activemq.user=admin
+	spring.activemq.password=secret
+
+	. Mas opciones ActiveMQProperties for more of the supported options.
+
+	* JmsTemplate y JmsMessagingTemplate (new in Spring 4.1) can be injected in a similar manner.
+
+	@Component
+	public class MyBean {
+
+	    private final JmsTemplate jmsTemplate;
+
+	    @Autowired
+	    public MyBean(JmsTemplate jmsTemplate) {
+	        this.jmsTemplate = jmsTemplate;
+	    }
+
+	    // ...
+
+	}
+
+	* Recibiendo un Mensaje
+
+	any bean can be annotated with @JmsListener to create a listener endpoint.
+
+	@Component
+	public class MyBean {
+
+	    @JmsListener(destination = "someQueue")
+	    public void processMessage(String content) { ... }
+
+	}
+
+
+
+
+17) TESTING
+---------------------
+
+. Boot proporciona una serie de herramientas para Testing
+
+. spring-boot-starter-test
+
+Incluye las dependencias a :
+
+	- Spring Test — integration test support for Spring applications.
+	- Junit — The de-facto standard for unit testing Java applications.
+	- Hamcrest — A library of matcher objects (also known as constraints or predicates) allowing assertThat style JUnit assertions.
+	- Mockito — A Java mocking framework.
+
+@SpringApplicationConfiguration alternativa a @ContextConfiguration --> para conseguir las caracteristicas de Spring Boot
+
+	@RunWith(SpringJUnit4ClassRunner.class)
+	@SpringApplicationConfiguration(classes = SampleDataJpaApplication.class)
+	public class CityRepositoryIntegrationTests {
+
+	    @Autowired
+	    CityRepository repository;
+
+	    // ...
+
+	}
+
+. IntegrationTest ???
+. RestTemplate ??
+
+
+18) SPRING BOOT ACTUATOR
+-------------------------
+
+Spring Boot añade una serie de caracteristicas adicionales para ayudar a controlar y monitorizar la aplicacion
+
+Entre ellas
+
+– /health mostrará el estado de salud de la aplicación.
+
+– /info mostrará información del proyecto (incluído el branch/commit de Git).
+
+– /dump mostrará un dump de todos los threads.
+
+– /beans mostrará todos los beans del ApplicationContext
+
+- /autoconfig Muestra un oinforme con todas las auto-configuraciones disponibles y la razaon de pq se aplican o no
+
+- /beans Lista de los beasn manejados por Spring
+
+- /configprops Lista de los @ConfigurationProperties
+
+- /env Lista las propiedades registradas Spring’s ConfigurableEnvironment.
+
+- /metrics Muestra informacion de las metricas del proyecto
+
+- /mappings Lista de los @RequestMapping path
+
+- /shutdown Permite realizar un shutdown de la aplicacion
+
+- /trace Información de traza , por defecto las ultimas peticiones HTTP
+
+
+Estos endpoint se pueden personalizar desde el application.properties
+
+endpoints.beans.id=springbeans
+endpoints.beans.sensitive=false
+endpoints.shutdown.enabled=true  --> Activo el shutdown
+
+
+. Se puede personalizar el /health para ver si la conexion a BBDD funciona (DataSourceHealthIndicator ) o si servicios rest estan activos
+
+
+import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyHealth implements HealthIndicator {
+
+    @Override
+    public Health health() {
+        // perform some specific health check
+        return ...
+    }
+
+}
+
+
+. Personalizar /info Añadiendo datos al application.properties con el prefijo info.*
+
+info.app.name=MyService
+info.app.description=My awesome service
+info.app.version=1.0.0
+
+
+ /Metrics devuelven informacion sobre memory, heap, class loading, processor and thread pool information along with some HTTP metrics.
+
+ {
+    "counter.status.200.root": 20,  --> Peticiones 
+    "counter.status.200.metrics": 3, --> Peticiones a /metrics
+    "counter.status.200.**": 5, --> Peticiones a recursos estaticos
+    "counter.status.401.root": 4, --> Accesos no autorizados
+    "gauge.response.**": 6, --> TIempos de respuesta
+    "gauge.response.root": 2,
+    "gauge.response.metrics": 3,
+    "classes": 5808,
+    "classes.loaded": 5808,
+    "classes.unloaded": 0,
+    "heap": 3728384,
+    "heap.committed": 986624,
+    "heap.init": 262144,
+    "heap.used": 52765,
+    "mem": 986624,
+    "mem.free": 933858,
+    "processors": 8,
+    "threads": 15,
+    "threads.daemon": 11,
+    "threads.peak": 15,
+    "uptime": 494836,
+    "instance.uptime": 489782,
+    "datasource.primary.active": 5,
+    "datasource.primary.usage": 0.25
+}
+
+
+. Metricas DSatasource
+
+The maximum number connections (datasource.xxx.max).
+The minimum number of connections (datasource.xxx.min).
+The number of active connections (datasource.xxx.active)
+The current usage of the connection pool (datasource.xxx.usage).
+
+
+. Crear tus propias metricas inyectando CounterService o GaugeService
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.metrics.CounterService;
+import org.springframework.stereotype.Service;
+
+@Service
+public class MyService {
+
+    private final CounterService counterService;
+
+    @Autowired
+    public MyService(CounterService counterService) {
+        this.counterService = counterService;
+    }
+
+    public void exampleMethod() {
+        this.counterService.increment("services.system.myservice.invoked");
+    }
+
+}
+
+GaugeService revisar y crear ejemplo
+
+@RestController
+@RequestMapping("/user")
+@EnableAutoConfiguration
+class UserController {
+
+  @Autowired
+  UserRepository repository
+
+  @Autowired
+  GaugeService gaugeService
+
+  @Value('${application.metrics.dbExecutionTimeKey}')
+  String dbExecutionKey
+
+  @RequestMapping(method=[RequestMethod.GET])
+  def get(Long id) {
+    def start = new Date().time
+    def result = id ? repository.findOne(id) : repository.findAll()
+    gaugeService.submit dbExecutionKey, new Date().time - start
+    result
+  }
+
+  public static void main(String[] args) {
+    SpringApplication.run UserController, args
+  }
+}
+
+
+* Se pueden añadir las metricas Coda Hale Metrics incluyendo su libreria entre las dependencias del proyecto.
+
+* /trace tracea las peticiones HTTP
+
+	- Se pueden customizar para añadir nuestras trazas inyectando TraceRepository en los Spring BEans
+
+
+
+
+
+
+
+
+
