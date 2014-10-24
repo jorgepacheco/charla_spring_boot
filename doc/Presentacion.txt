@@ -496,6 +496,22 @@ public EmbeddedServletContainerFactory servletContainer() {
 }
 
 
+  <bean id="templateResolver"
+        class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+    <property name="prefix" value="/WEB-INF/templates/" />
+    <property name="suffix" value=".html" />
+    <property name="templateMode" value="HTML5" />
+  </bean>
+    
+  <bean id="templateEngine"
+        class="org.thymeleaf.spring4.SpringTemplateEngine">
+    <property name="templateResolver" ref="templateResolver" />
+  </bean>
+   
+  <bean class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
+    <property name="templateEngine" ref="templateEngine" />
+  </bean>  
+
 
 ==========================================================
 
@@ -769,6 +785,7 @@ Incluye las dependencias a :
 
 Spring Boot añade una serie de caracteristicas adicionales para ayudar a controlar y monitorizar la aplicacion
 
+spring-boot-starter-actuator
 Entre ellas
 
 – /health mostrará el estado de salud de la aplicación.
@@ -926,9 +943,24 @@ class UserController {
 
 
 
+Custom tracing
+
+If you need to trace additional events you can inject a {sc-spring-boot-actuator}/trace/TraceRepository.{sc-ext}[TraceRepository] into your Spring Beans. The add method accepts a single Map structure that will be converted to JSON and logged.
+
+By default an InMemoryTraceRepository will be used that stores the last 100 events. You can define your own instance of the InMemoryTraceRepository bean if you need to expand the capacity. You can also create your own alternative TraceRepository implementation if needed.
 
 
 
+Why should I use Spring Boot?
+PROS
+•  Simplifies the use of Spring technologies.
+•  Allows to experiment Spring by coding not by reading books.
+•  Saves days of work at beginning of a new project.
+•  Xml configuration still available.
+•  Doesn’t add aspects and
+doesn’t generate code.
+•  Production-ready.
+•  Provides RESTfull monitoring services
 
 
 
