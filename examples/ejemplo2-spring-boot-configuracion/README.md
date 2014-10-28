@@ -2,6 +2,8 @@
 
 . Configuración con YAML y properties, personaliza la consola de Spring Boot con banner.txt
 
+. Rellenar las propiedades mail.username, mail.password del fichero mail.properties
+
 
 . mvn spring-boot:run --> Ejecutar
 
