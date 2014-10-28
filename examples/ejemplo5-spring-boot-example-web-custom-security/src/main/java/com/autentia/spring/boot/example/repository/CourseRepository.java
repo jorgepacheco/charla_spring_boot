@@ -1,9 +1,13 @@
 package com.autentia.spring.boot.example.repository;
 
-import org.springframework.data.repository.CrudRepository;
-
 import com.autentia.spring.boot.example.model.Course;
 
-public interface CourseRepository extends CrudRepository<Course, Long> {
+public interface CourseRepository {
+
+	public Course save(Course course);
+
+	public Iterable<Course> findAll();
+
+	public Course findOne(Long id);
 
 }

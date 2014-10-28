@@ -2,11 +2,13 @@ package com.autentia.spring.boot.example.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.autentia.spring.boot.example.model.Course;
 import com.autentia.spring.boot.example.repository.CourseRepository;
 
 @Service("courseService")
+@Transactional
 public class CourseServiceImpl implements CourseService {
 
 	private final CourseRepository courseRepository;

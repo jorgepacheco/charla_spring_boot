@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.autentia.boot</groupId>
-	<artifactId>ejemplo5-spring-boot-example-web-custom-security</artifactId>
+	<artifactId>ejemplo8-spring-boot-example-web-actuator-shell</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>ejemplo5-spring-boot-example-web-custom-security</name>
+	<name>ejemplo8-spring-boot-example-web-actuator-shell</name>
 	<description>Demo for Spring Boot</description>
 
 	<parent>
@@ -25,12 +25,28 @@
 		</dependency>		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-remote-shell</artifactId>
+		 </dependency>		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-collections</groupId>
