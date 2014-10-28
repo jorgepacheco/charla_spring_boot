@@ -6,6 +6,7 @@ import org.springframework.stereotype.*;
 @Service
 public class MyService implements CommandLineRunner {
 	
+	
 	public String message(){
 		return "Primera aplicación con Spring Boot !!!!\n";
 	}

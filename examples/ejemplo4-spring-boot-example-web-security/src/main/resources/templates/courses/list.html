@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="layout">
+  <head>
+    <title>Cursos : View all</title>
+  </head>
+  <body>
+    <h1 layout:fragment="header">Cursos : View all</h1>
+    <div layout:fragment="content" class="container">
+      <div class="pull-right">
+        <a href="form.html" th:href="@{/(form)}">Create Course</a>
+       </div>
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <td>ID</td>
+            <td>Nombre</td>
+            <td>Descripción</td>
+            <td>--</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:if="${courses.empty}">
+            <td colspan="3">
+              No Cursos
+            </td>
+          </tr>
+          <tr th:each="course : ${courses}">
+            <td th:text="${course.id}">1</td>
+            <td th:text="${course.name}">
+              Nombre
+            </td>
+             <td th:text="${course.description}">
+              Nombre
+            </td>           
+            <td>
+              <a href="view.html"
+                  th:href="@{'/' + ${course.id}}"
+                  th:text="Detalle">
+                The summary
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>
