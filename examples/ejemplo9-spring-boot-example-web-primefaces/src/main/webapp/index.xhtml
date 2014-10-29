@@ -1,0 +1,44 @@
+<f:view xmlns="http://www.w3c.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:ng="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui">
+	<h:head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<title>Listado de Cursos</title>
+		<style>
+		body {font-size:12px; }
+</style>
+	</h:head>
+	<h:body>
+		<h:form>
+			<p:panel header="Frameworks Soportados?" >
+				<div style="height:50px">
+					Ejemplo PrimeFaces 5 sobre Spring Boot 1.2
+				</div>
+			</p:panel>
+			<p:panel header="JSF 2.2 Bean Access">
+				#{helloWorldBean.hello}
+			</p:panel>
+
+
+			<p:dataTable var="course" value="#{courseView.courses}">
+				<p:column headerText="Id">
+					<h:outputText value="#{course.id}" />
+				</p:column>
+
+				<p:column headerText="Nombre">
+					<h:outputText value="#{course.name}" />
+				</p:column>
+
+				<p:column headerText="Descripción">
+					<h:outputText value="#{course.description}" />
+				</p:column>
+
+			</p:dataTable>
+
+		</h:form>
+	</h:body>
+</f:view>
