@@ -22,12 +22,14 @@
 
   . Ejecutar el jar java -jar target/ejemplo1-spring-boot-initial-0.0.1-SNAPSHOT.jar
   
-  . Acceder http://localhost:8080/
+  . Acceder http://localhost:8888/course-backoffice
   
   . Acceder a Actuator:
   
-  		http://localhost:8080/admin/info
-  		http://localhost:8080/admin/health
-  		http://localhost:8080/admin/metrics
-  		http://localhost:8080/admin/trace
+  		http://localhost:8888/course-backoffice/admin/info
+  		http://localhost:8888/course-backoffice/admin/health
+  		http://localhost:8888/course-backoffice/admin/metrics
+  		http://localhost:8888/course-backoffice/admin/trace
   		.......
+  		
+  		

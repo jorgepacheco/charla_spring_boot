@@ -38,33 +38,25 @@ public class SampleSecureApplicationTests {
 
 	@Value("${local.server.port}")
 	private int port;
+	
+	@Value("${server.contextPath}")
+	private String contextPath = "";
 
 	@Test
 	public void testHome() throws Exception {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.TEXT_HTML));
 		ResponseEntity<String> entity = new TestRestTemplate().exchange(
-				"http://localhost:" + this.port, HttpMethod.GET, new HttpEntity<Void>(
+				"http://localhost:" + this.port + this.contextPath + "/", HttpMethod.GET, new HttpEntity<Void>(
 						headers), String.class);
-		assertEquals(HttpStatus.FOUND, entity.getStatusCode());
-		assertTrue("Wrong location:\n" + entity.getHeaders(), entity.getHeaders()
-				.getLocation().toString().endsWith(port + "/login"));
+		assertTrue("Wrong login Page", entity.getBody().contains("Login with Username and Password"));
+		
 	}
 
-	@Test
-	public void testLoginPage() throws Exception {
-		HttpHeaders headers = new HttpHeaders();
-		headers.setAccept(Arrays.asList(MediaType.TEXT_HTML));
-		ResponseEntity<String> entity = new TestRestTemplate().exchange(
-				"http://localhost:" + this.port + "/login", HttpMethod.GET,
-				new HttpEntity<Void>(headers), String.class);
-		assertEquals(HttpStatus.OK, entity.getStatusCode());
-		assertTrue("Wrong content:\n" + entity.getBody(),
-				entity.getBody().contains("_csrf"));
-	}
+
 
 	@Test
-	public void testLogin() throws Exception {
+	public void testLoginOK() throws Exception {
 		HttpHeaders headers = getHeaders();
 		headers.setAccept(Arrays.asList(MediaType.TEXT_HTML));
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -72,20 +64,38 @@ public class SampleSecureApplicationTests {
 		form.set("username", "user");
 		form.set("password", "user");
 		ResponseEntity<String> entity = new TestRestTemplate().exchange(
-				"http://localhost:" + this.port + "/login", HttpMethod.POST,
+				"http://localhost:" + this.port +  this.contextPath + "/login", HttpMethod.POST,
 				new HttpEntity<MultiValueMap<String, String>>(form, headers),
 				String.class);
 		assertEquals(HttpStatus.FOUND, entity.getStatusCode());
 		assertTrue("Wrong location:\n" + entity.getHeaders(), entity.getHeaders()
-				.getLocation().toString().endsWith(port + "/"));
+				.getLocation().toString().endsWith(port + this.contextPath + "/"));
 		assertNotNull("Missing cookie:\n" + entity.getHeaders(),
 				entity.getHeaders().get("Set-Cookie"));
+	}
+	
+	@Test
+	public void testLoginError() throws Exception {
+		HttpHeaders headers = getHeaders();
+		headers.setAccept(Arrays.asList(MediaType.TEXT_HTML));
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<String, String>();
+		form.set("username", "userError");
+		form.set("password", "user");
+		ResponseEntity<String> entity = new TestRestTemplate().exchange(
+				"http://localhost:" + this.port +  this.contextPath + "/login", HttpMethod.POST,
+				new HttpEntity<MultiValueMap<String, String>>(form, headers),
+				String.class);
+		assertEquals(HttpStatus.FOUND, entity.getStatusCode());
+		assertTrue("Wrong location:\n" + entity.getHeaders(), entity.getHeaders()
+				.getLocation().toString().endsWith(port + this.contextPath + "/login?error"));
+
 	}
 
 	private HttpHeaders getHeaders() {
 		HttpHeaders headers = new HttpHeaders();
 		ResponseEntity<String> page = new TestRestTemplate().getForEntity(
-				"http://localhost:" + this.port + "/login", String.class);
+				"http://localhost:" + this.port + this.contextPath + "/login", String.class);
 		assertEquals(HttpStatus.OK, page.getStatusCode());
 		String cookie = page.getHeaders().getFirst("Set-Cookie");
 		headers.set("Cookie", cookie);
@@ -99,7 +109,7 @@ public class SampleSecureApplicationTests {
 	@Test
 	public void testCss() throws Exception {
 		ResponseEntity<String> entity = new TestRestTemplate().getForEntity(
-				"http://localhost:" + this.port + "/css/bootstrap.min.css", String.class);
+				"http://localhost:" + this.port +  this.contextPath + "/css/bootstrap.min.css", String.class);
 		assertEquals(HttpStatus.OK, entity.getStatusCode());
 		assertTrue("Wrong body:\n" + entity.getBody(), entity.getBody().contains("body"));
 	}

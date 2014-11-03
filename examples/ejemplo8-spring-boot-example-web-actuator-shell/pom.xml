@@ -65,6 +65,14 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+	        <plugin>
+	            <groupId>pl.project13.maven</groupId>
+	            <artifactId>git-commit-id-plugin</artifactId>
+                   <configuration>
+                       <dotGitDirectory>${project.basedir}/../../.git</dotGitDirectory> <!-- required, you have to specify this path -->
+                   </configuration>	            
+	            
+	        </plugin>			
 		</plugins>
 	</build>
 

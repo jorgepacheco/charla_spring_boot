@@ -18,4 +18,4 @@
 
   . Ejecutar el jar java -jar target/ejemplo1-spring-boot-initial-0.0.1-SNAPSHOT.jar
   
-  . Acceder http://localhost:8080/
+  . Acceder http://localhost:8888/course-backoffice

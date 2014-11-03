@@ -1,6 +1,10 @@
 package com.autentia.spring.boot.example.service;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.metrics.CounterService;
+import org.springframework.boot.actuate.metrics.GaugeService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,19 +17,31 @@ public class CourseServiceImpl implements CourseService {
 
 	private final CourseRepository courseRepository;
 	
+	private final CounterService counterService;
+	
+	 @Autowired
+	 private GaugeService gaugeService;
+	
 	@Autowired
-	public CourseServiceImpl(CourseRepository courseRepository) {
+	public CourseServiceImpl(CourseRepository courseRepository, CounterService counterService) {
 		this.courseRepository = courseRepository;
+		this.counterService = counterService;
 	}
 
 	@Override
 	public Course save(Course course) {
+		this.counterService.increment("autentia.metrics.save.course");
 		return courseRepository.save(course);
 	}
 
 	@Override
 	public Iterable<Course> getCourses() {
-		return courseRepository.findAll();
+		
+	    Long start = new Date().getTime();
+	    Iterable<Course> courses = courseRepository.findAll();
+	    gaugeService.submit("autentia.metrics.time.get.courses", new Date().getTime() - start);
+		
+		return courses;
 	}
 
 	@Override

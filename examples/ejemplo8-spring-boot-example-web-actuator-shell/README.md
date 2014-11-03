@@ -1,4 +1,4 @@
-. Septimo ejemplo con Spring Boot: Aplicacion WEB con Thymeleaf + Seguridad Personalizada + Spring DATA + Actuator
+. Octavo ejemplo con Spring Boot: Aplicacion WEB con Thymeleaf + Seguridad Personalizada + Spring DATA + Actuator Shell
 
 . CRUD de Cursos, persitencia en BBDD(embebida)
 
@@ -22,12 +22,9 @@
 
   . Ejecutar el jar java -jar target/ejemplo1-spring-boot-initial-0.0.1-SNAPSHOT.jar
   
-  . Acceder http://localhost:8080/
+  . Acceder http://localhost:8888/course-backoffice
   
-  . Acceder a Actuator:
+  . Acceder a SHELL Actuator:
   
-  		http://localhost:8080/admin/info
-  		http://localhost:8080/admin/health
-  		http://localhost:8080/admin/metrics
-  		http://localhost:8080/admin/trace
-  		.......
+ 	ssh -p 2000 admin@localhost
+ 	help -- Lista de comandos
