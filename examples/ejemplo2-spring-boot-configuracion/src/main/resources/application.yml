@@ -1,11 +1,10 @@
+
 message:
     text: Mensaje sin Profile Activo
     to: jpacheco@autentia.com
     replyTo: someone@localhost
     from: jpacheco12@gmail.com
-    subject: Mail production
-spring:
-    profiles.active: production
+    subject: Mail Default
 ---
 spring:
     profiles: development

@@ -1,6 +1,7 @@
 package com.autentia.springboot;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
@@ -14,16 +15,19 @@ import com.autentia.springboot.component.MyService;
 @ComponentScan
 public class Application {
 	
+	@Value("${spring.profiles.active:default}")
+	private String profile;
+	
 	@Autowired
 	private MyService service;
 
     @RequestMapping("/hello")
     String home() {
-        return service.message();
+        return service.message() + profile + "\n";
     }
 
     public static void main(String[] args) throws Exception {
-      SpringApplication.run(Application.class, new String[]{"--debug"});
+      SpringApplication.run(Application.class, args);
     }
 
 }

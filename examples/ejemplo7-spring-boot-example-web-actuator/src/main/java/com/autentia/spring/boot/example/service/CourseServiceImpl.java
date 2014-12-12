@@ -18,14 +18,14 @@ public class CourseServiceImpl implements CourseService {
 	private final CourseRepository courseRepository;
 	
 	private final CounterService counterService;
-	
-	 @Autowired
-	 private GaugeService gaugeService;
+
+	private final GaugeService gaugeService;
 	
 	@Autowired
-	public CourseServiceImpl(CourseRepository courseRepository, CounterService counterService) {
+	public CourseServiceImpl(CourseRepository courseRepository, CounterService counterService, GaugeService gaugeService) {
 		this.courseRepository = courseRepository;
 		this.counterService = counterService;
+		this.gaugeService = gaugeService;
 	}
 
 	@Override

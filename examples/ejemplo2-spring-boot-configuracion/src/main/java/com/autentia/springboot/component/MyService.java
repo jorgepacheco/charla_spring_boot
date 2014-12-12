@@ -24,7 +24,7 @@ public class MyService implements CommandLineRunner {
 
 	public String message() {
 		send();
-		return "Primera aplicación con Spring Boot !!!!\n";
+		return "Primera aplicación con Spring Boot !!!! Profile: ";
 	}
 	
 
